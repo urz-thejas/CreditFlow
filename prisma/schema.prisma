@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String         @id @default(cuid())
+  name           String
+  email          String         @unique
+  password       String
+  university     String?
+  studentId      String?
+  role           String         @default("USER")
+  avatarInitials String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  transactions   Transaction[]
+  sessions       Session[]
+  notifications  Notification[]
+  settings       UserSettings?
+
+  @@map("users")
+}
+
+model Transaction {
+  id             String   @id @default(cuid())
+  txnId          String   @unique
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  amount         Float
+  description    String?
+  status         String   @default("PENDING")
+  cardNumber     String
+  cardBrand      String   @default("VISA")
+  processingFee  Float    @default(0)
+
+  failureReason  String?
+  referenceCode  String?
+
+  initiatedAt    DateTime @default(now())
+  completedAt    DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  timeline       TransactionEvent[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("transactions")
+}
+
+model TransactionEvent {
+  id            String      @id @default(cuid())
+  transactionId String
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  step          String
+  status        String
+  description   String
+  timestamp     DateTime    @default(now())
+
+  @@map("transaction_events")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  device    String?
+  browser   String?
+  ip        String?
+  lastSeen  DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
+  @@map("notifications")
+}
+
+model UserSettings {
+  id                    String  @id @default(cuid())
+  userId                String  @unique
+  user                  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailOnSuccess        Boolean @default(true)
+  emailOnFailure        Boolean @default(true)
+  browserNotifications  Boolean @default(false)
+  theme                 String  @default("LIGHT")
+
+  @@map("user_settings")
+}

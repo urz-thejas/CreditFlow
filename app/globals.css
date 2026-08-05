@@ -1,0 +1,255 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   CreditFlow Design System — CSS Custom Properties
+   ======================================== */
+
+:root {
+  /* Primary */
+  --color-primary: #4F6EF7;
+  --color-primary-hover: #3D5CE5;
+  --color-primary-light: #EEF1FE;
+  --color-primary-dark: #2B3FA8;
+
+  /* Backgrounds */
+  --color-bg: #F7F8FA;
+  --color-surface: #FFFFFF;
+
+  /* Sidebar */
+  --color-sidebar: #1A1D2E;
+  --color-sidebar-hover: #252840;
+
+  /* Borders */
+  --color-border: #E4E7EF;
+  --color-border-strong: #C9CDD9;
+
+  /* Text */
+  --color-text-primary: #0F1117;
+  --color-text-secondary: #5A6278;
+  --color-text-tertiary: #9AA3BA;
+  --color-text-inverse: #FFFFFF;
+  --color-text-sidebar: #BEC5DC;
+
+  /* Status */
+  --color-success: #12B76A;
+  --color-success-bg: #ECFDF3;
+  --color-success-dark: #027A48;
+
+  --color-warning: #F79009;
+  --color-warning-bg: #FFFAEB;
+  --color-warning-dark: #B54708;
+
+  --color-error: #F04438;
+  --color-error-bg: #FEF3F2;
+  --color-error-dark: #B42318;
+
+  --color-info: #0BA5EC;
+  --color-info-bg: #E0F2FE;
+
+  /* Interactive */
+  --color-hover: #F2F4F8;
+  --color-active: #E8ECFB;
+  --color-focus: #4F6EF7;
+}
+
+/* ========================================
+   Dark Mode
+   ======================================== */
+
+[data-theme="dark"] {
+  --color-bg: #0F1117;
+  --color-surface: #1A1D2E;
+  --color-sidebar: #0D0F1A;
+  --color-sidebar-hover: #1A1D2E;
+  --color-border: #252840;
+  --color-border-strong: #353860;
+  --color-text-primary: #F1F2F6;
+  --color-text-secondary: #9AA3BA;
+  --color-text-tertiary: #5A6278;
+  --color-text-inverse: #0F1117;
+  --color-text-sidebar: #BEC5DC;
+  --color-hover: #1F2235;
+  --color-active: #252840;
+  --color-primary-light: #1E2340;
+  --color-success-bg: #0A2E1A;
+  --color-warning-bg: #2E1F0A;
+  --color-error-bg: #2E0A0A;
+  --color-info-bg: #0A1E2E;
+}
+
+/* ========================================
+   Base Resets
+   ======================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+}
+
+/* ========================================
+   Focus Styles
+   ======================================== */
+
+*:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ========================================
+   Skip Link
+   ======================================== */
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: 8px 16px;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 16px;
+}
+
+/* ========================================
+   Scrollbar
+   ======================================== */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
+}
+
+/* ========================================
+   Skeleton Shimmer
+   ======================================== */
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-hover) 25%,
+    var(--color-border) 50%,
+    var(--color-hover) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ========================================
+   Payment Success Checkmark Animation
+   ======================================== */
+
+.success-checkmark-circle {
+  stroke-dasharray: 283;
+  stroke-dashoffset: 283;
+  animation: draw-circle 0.4s ease-out forwards;
+}
+
+.success-checkmark-check {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: draw-check 0.3s ease-out 0.35s forwards;
+}
+
+@keyframes draw-circle {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes draw-check {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Error X Animation */
+.error-x-circle {
+  stroke-dasharray: 283;
+  stroke-dashoffset: 283;
+  animation: draw-circle 0.4s ease-out forwards;
+}
+
+.error-x-line {
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+  animation: draw-check 0.2s ease-out 0.35s forwards;
+}
+
+/* ========================================
+   Reduced Motion
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ========================================
+   Utility Classes
+   ======================================== */
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #7C3AED 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Indian number formatting helper - for visual consistency */
+.font-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ========================================
+   Sonner Toast Overrides
+   ======================================== */
+
+[data-sonner-toaster] {
+  --normal-bg: var(--color-surface);
+  --normal-border: var(--color-border);
+  --normal-text: var(--color-text-primary);
+}
