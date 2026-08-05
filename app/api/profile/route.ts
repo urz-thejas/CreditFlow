@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { profileSchema } from '@/lib/validators'
 import { getInitials } from '@/lib/formatters'
+import { isDynamicServerError } from '@/lib/utils'
 
 export async function GET() {
   try {
@@ -30,6 +31,7 @@ export async function GET() {
 
     return NextResponse.json(user)
   } catch (error) {
+    if (isDynamicServerError(error)) throw error
     console.error('Profile GET error:', error)
     return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 })
   }
@@ -74,7 +76,9 @@ export async function PUT(request: Request) {
 
     return NextResponse.json(updated)
   } catch (error) {
+    if (isDynamicServerError(error)) throw error
     console.error('Profile PUT error:', error)
     return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 })
   }
 }
+

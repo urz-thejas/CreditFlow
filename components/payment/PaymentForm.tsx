@@ -1,8 +1,7 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { paymentSchema, type PaymentInput } from '@/lib/validators'
+import type { PaymentInput } from '@/lib/validators'
+import type { UseFormRegister, FieldErrors, UseFormWatch } from 'react-hook-form'
 import { formatCardNumber, detectCardBrand } from '@/lib/formatters'
 import { Input } from '@/components/ui/Input'
 import { CardVisual } from '@/components/payment/CardVisual'
@@ -10,14 +9,12 @@ import { CreditCard, Info } from 'lucide-react'
 
 interface PaymentFormProps {
   defaultAmount?: number
-  onValuesChange: (values: Partial<PaymentInput>) => void
-  onSubmit: (data: PaymentInput) => void
-  register: ReturnType<typeof useForm<PaymentInput>>['register']
-  errors: ReturnType<typeof useForm<PaymentInput>>['formState']['errors']
-  watch: ReturnType<typeof useForm<PaymentInput>>['watch']
+  register: UseFormRegister<PaymentInput>
+  errors: FieldErrors<PaymentInput>
+  watch: UseFormWatch<PaymentInput>
 }
 
-export function PaymentForm({ defaultAmount, onValuesChange, register, errors, watch }: PaymentFormProps) {
+export function PaymentForm({ defaultAmount, register, errors, watch }: PaymentFormProps) {
   const cardNumber = watch('cardNumber') || ''
   const expiry = watch('expiry') || ''
   const cardholderName = watch('cardholderName') || ''
@@ -110,10 +107,25 @@ export function PaymentForm({ defaultAmount, onValuesChange, register, errors, w
 
           <div className="flex items-start gap-2 p-3 bg-info-bg rounded-md">
             <Info className="h-4 w-4 text-info mt-0.5 shrink-0" />
-            <p className="text-[12px] text-text-secondary leading-relaxed">
-              Use <code className="font-mono bg-surface px-1 py-0.5 rounded text-[11px]">4242 4242 4242 4242</code> for success ·{' '}
-              <code className="font-mono bg-surface px-1 py-0.5 rounded text-[11px]">4000 0000 0000 0002</code> for failure
-            </p>
+            <div className="text-[12px] text-text-secondary leading-relaxed space-y-1">
+              <p>
+                <span className="font-medium">VISA success:</span>{' '}
+                <code className="font-mono bg-surface px-1 py-0.5 rounded text-[11px]">4242 4242 4242 4242</code>
+                {' · '}
+                <span className="font-medium">VISA fail:</span>{' '}
+                <code className="font-mono bg-surface px-1 py-0.5 rounded text-[11px]">4000 0000 0000 0002</code>
+              </p>
+              <p>
+                <span className="font-medium">MasterCard:</span>{' '}
+                <code className="font-mono bg-surface px-1 py-0.5 rounded text-[11px]">5500 0000 0000 0004</code>
+                {' · '}
+                <span className="font-medium">Amex:</span>{' '}
+                <code className="font-mono bg-surface px-1 py-0.5 rounded text-[11px]">3714 496353 98431</code>
+                {' · '}
+                <span className="font-medium">RuPay:</span>{' '}
+                <code className="font-mono bg-surface px-1 py-0.5 rounded text-[11px]">6069 8500 0000 0007</code>
+              </p>
+            </div>
           </div>
         </div>
       </div>

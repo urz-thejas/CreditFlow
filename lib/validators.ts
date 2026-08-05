@@ -29,11 +29,26 @@ export const paymentSchema = z.object({
   description: z.string().optional(),
   cardNumber: z
     .string()
-    .min(13, 'Invalid card number')
-    .max(19, 'Invalid card number'),
-  expiry: z.string().regex(/^(0[1-9]|1[0-2])\/\d{2}$/, 'Use MM/YY format'),
+    .min(13, 'Card number must be at least 13 digits')
+    .max(19, 'Card number cannot exceed 19 digits')
+    .refine((val) => /^\d[\d\s]*\d$|^\d$/.test(val.trim()), 'Card number must contain only digits'),
+  expiry: z
+    .string()
+    .regex(/^(0[1-9]|1[0-2])\/\d{2}$/, 'Use MM/YY format')
+    .refine((val) => {
+      const [month, year] = val.split('/')
+      const now = new Date()
+      const expiry = new Date(2000 + parseInt(year, 10), parseInt(month, 10) - 1, 1)
+      // Card is valid through the end of the expiry month
+      const expiryEnd = new Date(expiry.getFullYear(), expiry.getMonth() + 1, 0)
+      return expiryEnd >= now
+    }, 'Card has expired'),
   cvv: z.string().regex(/^\d{3,4}$/, 'CVV must be 3–4 digits'),
-  cardholderName: z.string().min(2, 'Cardholder name is required'),
+  cardholderName: z
+    .string()
+    .min(2, 'Cardholder name must be at least 2 characters')
+    .max(60, 'Cardholder name is too long')
+    .refine((val) => /^[a-zA-Z\s'-]+$/.test(val.trim()), 'Name can only contain letters, spaces, hyphens, and apostrophes'),
 })
 
 // Profile: matches the profile page form fields and API handler

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns'
+import { isDynamicServerError } from '@/lib/utils'
 
 export async function GET() {
   try {
@@ -90,6 +91,7 @@ export async function GET() {
       trendVsLastMonth,
     })
   } catch (error) {
+    if (isDynamicServerError(error)) throw error
     console.error('Stats error:', error)
     return NextResponse.json(
       { error: 'Failed to fetch stats' },
@@ -97,3 +99,4 @@ export async function GET() {
     )
   }
 }
+

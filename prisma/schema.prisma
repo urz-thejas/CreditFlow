@@ -3,52 +3,53 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id             String         @id @default(cuid())
+  id             String   @id @default(cuid())
   name           String
-  email          String         @unique
+  email          String   @unique
   password       String
   university     String?
   studentId      String?
-  role           String         @default("USER")
+  role           String   @default("USER")
   avatarInitials String?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  transactions   Transaction[]
-  sessions       Session[]
-  notifications  Notification[]
-  settings       UserSettings?
+  transactions  Transaction[]
+  sessions      Session[]
+  notifications Notification[]
+  settings      UserSettings?
 
   @@map("users")
 }
 
 model Transaction {
-  id             String   @id @default(cuid())
-  txnId          String   @unique
-  userId         String
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  txnId  String @unique
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  amount         Float
-  description    String?
-  status         String   @default("PENDING")
-  cardNumber     String
-  cardBrand      String   @default("VISA")
-  processingFee  Float    @default(0)
+  amount        Float
+  description   String?
+  status        String  @default("PENDING")
+  cardNumber    String
+  cardBrand     String  @default("VISA")
+  processingFee Float   @default(0)
 
-  failureReason  String?
-  referenceCode  String?
+  failureReason String?
+  referenceCode String?
 
-  initiatedAt    DateTime @default(now())
-  completedAt    DateTime?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  initiatedAt DateTime  @default(now())
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  timeline       TransactionEvent[]
+  timeline TransactionEvent[]
 
   @@index([userId])
   @@index([status])
@@ -97,13 +98,13 @@ model Notification {
 }
 
 model UserSettings {
-  id                    String  @id @default(cuid())
-  userId                String  @unique
-  user                  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  emailOnSuccess        Boolean @default(true)
-  emailOnFailure        Boolean @default(true)
-  browserNotifications  Boolean @default(false)
-  theme                 String  @default("LIGHT")
+  id                   String  @id @default(cuid())
+  userId               String  @unique
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailOnSuccess       Boolean @default(true)
+  emailOnFailure       Boolean @default(true)
+  browserNotifications Boolean @default(false)
+  theme                String  @default("LIGHT")
 
   @@map("user_settings")
 }

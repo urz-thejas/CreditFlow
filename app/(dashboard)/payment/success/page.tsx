@@ -16,15 +16,19 @@ export default function SuccessPage() {
   const [result, setResult] = useState<any>(null)
 
   useEffect(() => {
-    // Dynamic import for confetti to avoid SSR issues
-    import('canvas-confetti').then((confetti) => {
-      confetti.default({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#4F6EF7', '#12B76A', '#F79009']
+    // Dynamic import for confetti — graceful fallback if chunk fails to load
+    import('canvas-confetti')
+      .then((confetti) => {
+        confetti.default({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#4F6EF7', '#12B76A', '#F79009'],
+        })
       })
-    })
+      .catch(() => {
+        // Silently ignore ChunkLoadError — page still functions normally
+      })
 
     const data = sessionStorage.getItem('paymentResult')
     if (data) {

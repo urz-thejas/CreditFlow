@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { changePasswordSchema } from '@/lib/validators'
 import bcrypt from 'bcryptjs'
+import { isDynamicServerError } from '@/lib/utils'
 
 export async function POST(request: Request) {
   try {
@@ -47,6 +48,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
+    if (isDynamicServerError(error)) throw error
     console.error('Change password error:', error)
     return NextResponse.json(
       { error: 'Failed to change password' },
@@ -54,3 +56,4 @@ export async function POST(request: Request) {
     )
   }
 }
+

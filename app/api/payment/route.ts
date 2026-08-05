@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { paymentSchema } from '@/lib/validators'
 import { simulatePayment, generateTxnId, sleep } from '@/lib/sandbox'
 import { detectCardBrand, maskCard } from '@/lib/formatters'
+import { isDynamicServerError } from '@/lib/utils'
 
 export async function POST(request: Request) {
   try {
@@ -109,6 +110,7 @@ export async function POST(request: Request) {
         status === 'SUCCESS' ? '/payment/success' : '/payment/failure',
     })
   } catch (error) {
+    if (isDynamicServerError(error)) throw error
     console.error('Payment error:', error)
     return NextResponse.json(
       { error: 'Payment processing failed' },
@@ -116,3 +118,4 @@ export async function POST(request: Request) {
     )
   }
 }
+

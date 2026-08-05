@@ -3,12 +3,17 @@
 import { Bell, Search, Menu } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { useUIStore } from '@/store/ui'
+import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
 export function Topbar() {
   const { user } = useAuth()
   const toggleNotificationPanel = useUIStore((s) => s.toggleNotificationPanel)
   const toggleSidebar = useUIStore((s) => s.toggleSidebar)
+  const pathname = usePathname()
+
+  // Show search bar only on the Transactions page
+  const showSearch = pathname === '/transactions' || pathname.startsWith('/transactions/')
 
   const initials = user?.name
     ? user.name
@@ -22,7 +27,7 @@ export function Topbar() {
   return (
     <header className="sticky top-0 z-20 bg-surface/80 backdrop-blur-md border-b border-border">
       <div className="flex items-center justify-between h-16 px-4 lg:px-6">
-        {/* Left: Mobile menu + Search */}
+        {/* Left: Mobile menu + Search (transactions only) */}
         <div className="flex items-center gap-3">
           <button
             onClick={toggleSidebar}
@@ -32,21 +37,23 @@ export function Topbar() {
             <Menu className="h-5 w-5" />
           </button>
 
-          <div className="hidden sm:flex items-center relative">
-            <Search className="absolute left-3 h-4 w-4 text-text-tertiary" aria-hidden="true" />
-            <input
-              type="search"
-              placeholder="Search transactions..."
-              className={cn(
-                'w-[240px] h-9 pl-9 pr-3 bg-bg text-text-primary text-[13px]',
-                'border border-border rounded-md',
-                'placeholder:text-text-tertiary',
-                'focus:outline-none focus:ring-2 focus:ring-focus focus:border-transparent',
-                'transition-all duration-base'
-              )}
-              aria-label="Search transactions"
-            />
-          </div>
+          {showSearch && (
+            <div className="hidden sm:flex items-center relative">
+              <Search className="absolute left-3 h-4 w-4 text-text-tertiary" aria-hidden="true" />
+              <input
+                type="search"
+                placeholder="Search transactions..."
+                className={cn(
+                  'w-[240px] h-9 pl-9 pr-3 bg-bg text-text-primary text-[13px]',
+                  'border border-border rounded-md',
+                  'placeholder:text-text-tertiary',
+                  'focus:outline-none focus:ring-2 focus:ring-focus focus:border-transparent',
+                  'transition-all duration-base'
+                )}
+                aria-label="Search transactions"
+              />
+            </div>
+          )}
         </div>
 
         {/* Right: Notifications + Profile */}

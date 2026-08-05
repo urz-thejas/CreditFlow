@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { RefreshCw, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -12,13 +11,23 @@ import { Card } from '@/components/ui/Card'
 export default function FailurePage() {
   const router = useRouter()
   const [result, setResult] = useState<any>(null)
+  const [referenceCode, setReferenceCode] = useState<string>('')
 
   useEffect(() => {
     const data = sessionStorage.getItem('paymentResult')
     if (data) {
-      setResult(JSON.parse(data))
+      const parsed = JSON.parse(data)
+      setResult(parsed)
+      // Use stored reference code or generate client-side only to avoid hydration mismatch
+      setReferenceCode(
+        parsed.referenceCode ||
+          `REF${Math.random().toString(36).substring(2, 10).toUpperCase()}`
+      )
+    } else {
+      setReferenceCode(`REF${Math.random().toString(36).substring(2, 10).toUpperCase()}`)
     }
   }, [])
+
 
   return (
     <div className="max-w-[560px] mx-auto pt-10">
@@ -87,7 +96,7 @@ export default function FailurePage() {
             <div className="flex justify-between text-[13px]">
               <span className="text-text-secondary">Reference Code</span>
               <span className="text-text-primary font-mono">
-                REF{Math.random().toString(36).substring(2, 10).toUpperCase()}
+                {referenceCode || '—'}
               </span>
             </div>
           </div>

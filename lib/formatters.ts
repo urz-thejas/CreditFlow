@@ -49,10 +49,10 @@ export const formatCardNumber = (value: string): string => {
 export const detectCardBrand = (number: string): string => {
   const cleaned = number.replace(/\s/g, '')
   if (/^4/.test(cleaned)) return 'VISA'
-  if (/^5[1-5]/.test(cleaned)) return 'MASTERCARD'
+  if (/^5[1-5]/.test(cleaned) || /^2[2-7]/.test(cleaned)) return 'MASTERCARD'
   if (/^3[47]/.test(cleaned)) return 'AMEX'
-  if (/^(508|606|607|608|81|82|353|356)/.test(cleaned)) return 'RUPAY'
-  return 'VISA'
+  if (/^(508|606|607|608|81[0-9]|82[0-9]|353|356)/.test(cleaned)) return 'RUPAY'
+  return 'UNKNOWN'
 }
 
 export const getInitials = (name: string): string => {

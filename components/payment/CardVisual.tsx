@@ -9,10 +9,19 @@ interface CardVisualProps {
   cardBrand: string
 }
 
+const brandLabel: Record<string, string> = {
+  VISA: 'VISA',
+  MASTERCARD: 'MASTERCARD',
+  AMEX: 'AMEX',
+  RUPAY: 'RuPay',
+  UNKNOWN: '',
+}
+
 export function CardVisual({ cardNumber, expiry, cardholderName, cardBrand }: CardVisualProps) {
   const displayNumber = cardNumber || '•••• •••• •••• ••••'
   const displayExpiry = expiry || 'MM/YY'
   const displayName = cardholderName || 'YOUR NAME'
+  const label = brandLabel[cardBrand] ?? ''
 
   return (
     <div className="relative w-full max-w-[340px] h-[200px] rounded-xl overflow-hidden mx-auto">
@@ -39,9 +48,21 @@ export function CardVisual({ cardNumber, expiry, cardholderName, cardBrand }: Ca
             <line x1="12" y1="0" x2="12" y2="28" stroke="#B8922E" strokeWidth="0.5" />
             <line x1="24" y1="0" x2="24" y2="28" stroke="#B8922E" strokeWidth="0.5" />
           </svg>
-          <span className="text-[14px] font-bold text-white/80 tracking-wider">
-            {cardBrand || 'VISA'}
-          </span>
+          {label ? (
+            <span
+              className={cn(
+                'text-[13px] font-bold tracking-wider px-2 py-0.5 rounded',
+                cardBrand === 'VISA' && 'text-white/90',
+                cardBrand === 'MASTERCARD' && 'text-orange-300',
+                cardBrand === 'AMEX' && 'text-blue-300',
+                cardBrand === 'RUPAY' && 'text-green-300'
+              )}
+            >
+              {label}
+            </span>
+          ) : (
+            <span className="text-[12px] text-white/30 italic">Card</span>
+          )}
         </div>
 
         {/* Card Number */}

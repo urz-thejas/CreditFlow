@@ -1,16 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
-import { toast } from 'sonner'
 import { paymentSchema, type PaymentInput } from '@/lib/validators'
 import { PaymentForm } from '@/components/payment/PaymentForm'
 import { OrderSummary } from '@/components/payment/OrderSummary'
+import { FullPageSpinner } from '@/components/ui/Spinner'
 
-export default function PaymentPage() {
+function PaymentPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const defaultAmount = parseFloat(searchParams.get('amount') || '0') || undefined
@@ -31,6 +31,7 @@ export default function PaymentPage() {
   const amount = form.watch('amount') || 0
 
   const handleSubmit = form.handleSubmit(async (data) => {
+    if (isLoading) return
     setIsLoading(true)
 
     // Store payment data in sessionStorage for processing page
@@ -57,8 +58,6 @@ export default function PaymentPage() {
           <div className="md:col-span-7">
             <PaymentForm
               defaultAmount={defaultAmount}
-              onValuesChange={() => {}}
-              onSubmit={() => {}}
               register={form.register}
               errors={form.formState.errors}
               watch={form.watch}
@@ -74,5 +73,13 @@ export default function PaymentPage() {
         </div>
       </form>
     </motion.div>
+  )
+}
+
+export default function PaymentPage() {
+  return (
+    <Suspense fallback={<FullPageSpinner />}>
+      <PaymentPageContent />
+    </Suspense>
   )
 }

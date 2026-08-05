@@ -1,14 +1,20 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { ProcessingOverlay } from '@/components/payment/ProcessingOverlay'
 
 export default function ProcessingPage() {
   const router = useRouter()
+  // Guard against React Strict Mode double-invoking useEffect
+  const hasRun = useRef(false)
 
   useEffect(() => {
+    // Prevent duplicate API calls (React Strict Mode fires effects twice in dev)
+    if (hasRun.current) return
+    hasRun.current = true
+
     const processPayment = async () => {
       const dataStr = sessionStorage.getItem('pendingPayment')
       if (!dataStr) {
@@ -36,12 +42,11 @@ export default function ProcessingPage() {
 
         // Store result for success/failure pages
         sessionStorage.setItem('paymentResult', JSON.stringify(json))
-        
+
         // Artificial delay for animation completion
         setTimeout(() => {
           router.replace(json.redirectTo)
         }, 500)
-
       } catch (error) {
         sessionStorage.removeItem('pendingPayment')
         toast.error('An unexpected error occurred')

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { isDynamicServerError } from '@/lib/utils'
 
 export async function GET(
   _request: Request,
@@ -44,6 +45,7 @@ export async function GET(
 
     return NextResponse.json(transaction)
   } catch (error) {
+    if (isDynamicServerError(error)) throw error
     console.error('Transaction detail error:', error)
     return NextResponse.json(
       { error: 'Failed to fetch transaction' },
@@ -51,3 +53,4 @@ export async function GET(
     )
   }
 }
+

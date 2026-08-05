@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import { registerSchema } from '@/lib/validators'
 import { getInitials } from '@/lib/formatters'
+import { isDynamicServerError } from '@/lib/utils'
 
 export async function POST(request: Request) {
   try {
@@ -49,6 +50,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
+    if (isDynamicServerError(error)) throw error
     console.error('Registration error:', error)
     return NextResponse.json(
       { error: 'Something went wrong. Please try again.' },
@@ -56,3 +58,4 @@ export async function POST(request: Request) {
     )
   }
 }
+

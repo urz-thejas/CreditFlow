@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { settingsSchema } from '@/lib/validators'
+import { isDynamicServerError } from '@/lib/utils'
 
 export async function GET() {
   try {
@@ -29,6 +30,7 @@ export async function GET() {
 
     return NextResponse.json(settings)
   } catch (error) {
+    if (isDynamicServerError(error)) throw error
     console.error('Settings GET error:', error)
     return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 })
   }
@@ -79,6 +81,7 @@ export async function PUT(request: Request) {
   try {
     return await handleUpdate(request)
   } catch (error) {
+    if (isDynamicServerError(error)) throw error
     console.error('Settings PUT error:', error)
     return NextResponse.json({ error: 'Failed to update settings' }, { status: 500 })
   }
@@ -88,6 +91,7 @@ export async function PATCH(request: Request) {
   try {
     return await handleUpdate(request)
   } catch (error) {
+    if (isDynamicServerError(error)) throw error
     console.error('Settings PATCH error:', error)
     return NextResponse.json({ error: 'Failed to update settings' }, { status: 500 })
   }
@@ -107,7 +111,9 @@ export async function DELETE() {
 
     return NextResponse.json({ success: true })
   } catch (error) {
+    if (isDynamicServerError(error)) throw error
     console.error('Settings DELETE error:', error)
     return NextResponse.json({ error: 'Failed to delete account' }, { status: 500 })
   }
 }
+

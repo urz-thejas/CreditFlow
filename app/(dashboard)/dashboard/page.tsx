@@ -11,7 +11,6 @@ import { QuickPayment } from '@/components/dashboard/QuickPayment'
 import { RecentTransactions } from '@/components/dashboard/RecentTransactions'
 import { StatCardSkeleton, ChartSkeleton } from '@/components/ui/Skeleton'
 import { formatINR, getGreeting } from '@/lib/formatters'
-import type { Metadata } from 'next'
 
 const pageVariants = {
   initial: { opacity: 0, y: 6 },

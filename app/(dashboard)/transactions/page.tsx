@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Download } from 'lucide-react'
 import { toast } from 'sonner'
 import { useTransactions } from '@/hooks/useTransactions'
 import { TransactionTable } from '@/components/transactions/TransactionTable'
@@ -22,18 +21,19 @@ export default function TransactionsPage() {
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
 
-  // Debounce search
+  // Debounce search with a stable ref-based timeout
   const [debouncedSearch, setDebouncedSearch] = useState('')
-  
-  // Custom simple debounce
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   const handleSearchChange = useCallback((val: string) => {
     setSearch(val)
-    const timeoutId = setTimeout(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
       setDebouncedSearch(val)
       setPage(1) // Reset to page 1 on search
     }, 500)
-    return () => clearTimeout(timeoutId)
   }, [])
+
 
   const { data, total, totalPages, isLoading } = useTransactions({
     page,
